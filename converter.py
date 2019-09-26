@@ -197,8 +197,7 @@ class AudioMerger:
 		return sound_data
 
 
-def merge_mics(directory):
-	paths = [os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+def merge_mics(paths):
 	similar_paths = get_similar_paths(paths)
 	for key, value in similar_paths.items():
 		if len(value) > 1:

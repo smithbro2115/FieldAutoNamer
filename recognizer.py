@@ -9,8 +9,8 @@ with warnings.catch_warnings():
     import pydub
 
 
-def get_renamed_files_dict(path, reference_number, filter_words, check_words):
-    reference_file_paths = get_file_names(path, reference_number)
+def get_renamed_files_dict(paths, reference_number, filter_words, check_words):
+    reference_file_paths = get_file_names(paths, reference_number)
     for key, value in reference_file_paths.items():
         file_type = os.path.splitext(value)[1]
         audio_path = get_audio_segment(value)
@@ -25,8 +25,7 @@ def get_renamed_files_dict(path, reference_number, filter_words, check_words):
     return reference_file_paths
 
 
-def get_file_names(path, reference_file_number):
-    paths = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+def get_file_names(paths, reference_file_number):
     if reference_file_number:
         return get_all_reference_paths(paths, reference_file_number)
     return get_all_paths_in_correct_format(paths)

@@ -5,16 +5,21 @@ import os
 import argparse
 
 
-def process_sounds(directory, reference_number=None, filter_words=True, check_words=False, should_merge_mics=True):
-    new_names = recognizer.get_renamed_files_dict(directory, reference_number, filter_words, check_words)
+def process_sounds(paths, reference_number=None, filter_words=True, check_words=False, should_merge_mics=True):
+    new_names = recognizer.get_renamed_files_dict(paths, reference_number, filter_words, check_words)
     if should_merge_mics:
-        converter.merge_mics(directory)
-        renamer.rename_exact(directory, new_names)
+        converter.merge_mics(paths)
+        renamer.rename_exact(paths, new_names)
     elif reference_number:
-        renamer.rename_similar(directory, new_names)
+        renamer.rename_similar(paths, new_names)
     else:
-        renamer.rename_all(directory, new_names)
+        renamer.rename_all(paths, new_names)
     clear_cache()
+
+
+def process_directory(directory, reference_number=None, filter_words=True, check_words=False, should_merge_mics=True):
+    paths = [os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+    process_sounds(paths, reference_number, filter_words, check_words, should_merge_mics)
 
 
 def clear_cache():
@@ -54,6 +59,6 @@ if __name__ == "__main__":
     if args.merge:
         process_arguments['should_merge_mics'] = convert_string_to_bool(args.merge)
     if args.directory:
-        process_sounds(**process_arguments)
+        process_directory(**process_arguments)
     else:
         parser.error("-d is required")

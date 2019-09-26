@@ -1,17 +1,24 @@
 import os
 
 
-def rename_exact(directory, new_names):
-    for key, value in new_names.items():
-        key_path = f"{directory}\\{key}.WAV"
-        new_value_path = f"{directory}\\{value}"
-        if key_path != new_value_path:
-            rename_gracefully(key_path, new_value_path)
+def rename_exact(paths, new_names):
+    paths = get_similar_paths(paths)
+    for dir_name, similar_paths in paths.items():
+        path = similar_paths[0]
+        directory = os.path.dirname(path)
+        name = get_basename(os.path.basename(os.path.splitext(path)[0]))
+        try:
+            name_path = f"{directory}\\{name}.WAV"
+            new_value_path = f"{directory}\\{new_names[name]}"
+            if name_path != new_value_path:
+                rename_gracefully(name_path, new_value_path)
+        except KeyError:
+            continue
 
 
-def rename_all(directory, new_names):
-    paths = [os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+def rename_all(paths, new_names):
     for path in paths:
+        directory = os.path.dirname(path)
         basename = os.path.basename(os.path.splitext(path)[0])
         try:
             name = basename
@@ -26,12 +33,12 @@ def rename_all(directory, new_names):
             continue
 
 
-def rename_similar(directory, new_names):
-    paths = [os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+def rename_similar(paths, new_names):
     paths = get_similar_paths(paths)
     for key, similar_paths in paths.items():
         key_basename = os.path.basename(key)
         try:
+            directory = os.path.dirname(similar_paths[0])
             new_path = os.path.join(directory, new_names[key_basename])
         except KeyError:
             continue
